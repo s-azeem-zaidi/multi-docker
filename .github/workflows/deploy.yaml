@@ -18,20 +18,20 @@ jobs:
         run: |-
           docker build -t azeemzaidi/react-test -f ./client/Dockerfile.dev ./client
           docker run -e CI=true azeemzaidi/react-test npm test
-          docker build -t azeemzaidi/multi-client-10-14 ./client
-          docker build -t azeemzaidi/multi-nginx-10-14 ./nginx
-          docker build -t azeemzaidi/multi-server-10-14 ./server
-          docker build -t azeemzaidi/multi-worker-10-14 ./worker
-          docker push azeemzaidi/multi-client-10-14
-          docker push azeemzaidi/multi-nginx-10-14
-          docker push azeemzaidi/multi-server-10-14
-          docker push azeemzaidi/multi-worker-10-14
+          docker build -t azeemzaidi/multi-client ./client
+          docker build -t azeemzaidi/multi-nginx ./nginx
+          docker build -t azeemzaidi/multi-server ./server
+          docker build -t azeemzaidi/multi-worker ./worker
+          docker push azeemzaidi/multi-client
+          docker push azeemzaidi/multi-nginx
+          docker push azeemzaidi/multi-server
+          docker push azeemzaidi/multi-worker
  
       - name: Generate deployment package
         run: zip -r deploy.zip . -x '*.git*'
  
       - name: Deploy to EB
-        uses: einaregilsson/beanstalk-deploy@v19
+        uses: einaregilsson/beanstalk-deploy@v18
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
           aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
