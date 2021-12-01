@@ -9,19 +9,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }} --password-stdin
-      - run: docker build -t azeemzaidi/react-test -f ./client/Dockerfile.dev ./client
-      - run: docker run -e CI=true azeemzaidi/react-test npm test
- 
-      - run: docker build -t azeemzaidi/multi-client-10-14 ./client
-      - run: docker build -t azeemzaidi/multi-nginx-10-14 ./nginx
-      - run: docker build -t azeemzaidi/multi-server-10-14 ./server
-      - run: docker build -t azeemzaidi/multi-worker-10-14 ./worker
- 
-      - run: docker push azeemzaidi/multi-client-10-14
-      - run: docker push azeemzaidi/multi-nginx-10-14
-      - run: docker push azeemzaidi/multi-server-10-14
-      - run: docker push azeemzaidi/multi-worker-10-14
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+      - name: Running deploy scripts
+        run: |-
+          docker build -t azeemzaidi/react-test -f ./client/Dockerfile.dev ./client
+          docker run -e CI=true azeemzaidi/react-test npm test
+          docker build -t azeemzaidi/multi-client-10-14 ./client
+          docker build -t azeemzaidi/multi-nginx-10-14 ./nginx
+          docker build -t azeemzaidi/multi-server-10-14 ./server
+          docker build -t azeemzaidi/multi-worker-10-14 ./worker
+          docker push azeemzaidi/multi-client-10-14
+          docker push azeemzaidi/multi-nginx-10-14
+          docker push azeemzaidi/multi-server-10-14
+          docker push azeemzaidi/multi-worker-10-14
  
       - name: Generate deployment package
         run: zip -r deploy.zip . -x '*.git*'
